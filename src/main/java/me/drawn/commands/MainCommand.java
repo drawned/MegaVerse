@@ -13,6 +13,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -86,12 +87,12 @@ public class MainCommand implements CommandExecutor {
             s.sendMessage(Utils.getPrefix()+"Running MegaVerse v"+ MegaVerse.getInstance().getDescription().getVersion());
             s.sendMessage(divider);
             s.sendMessage(Utils.c(Utils.GREEN_COLOR+"/megaverse create <world name> &7- Allows you to create a new world using custom generators.\n"
-                    +Utils.GREEN_COLOR+"/megaverse tp <world> [player] &7- Teleports you to the specified world.\n"
-                    +Utils.GREEN_COLOR+"/megaverse info <world> &7- View detailed info about a world.\n"
+                    +Utils.GREEN_COLOR+"/megaverse tp <world> [player] &7- Teleports to the specified world.\n"
+                    +Utils.GREEN_COLOR+"/megaverse info [world] &7- View detailed info about a world.\n"
                     +Utils.GREEN_COLOR+"/megaverse list &7- Shows a list of all existing worlds.\n"
-                    +Utils.GREEN_COLOR+"/megaverse import <world name> &7- Imports a new downloaded world inside your server root folder.\n"
+                    +Utils.GREEN_COLOR+"/megaverse import <world_name> &7- Imports a new downloaded world inside your server root folder.\n"
                     +Utils.GREEN_COLOR+"/megaverse unload <world> &7- Unloads an active world from the server.\n"
-                    +Utils.GREEN_COLOR+"/megaverse delete <world> &7- Deletes an unloaded world from the server."));
+                    +Utils.GREEN_COLOR+"/megaverse delete <world_name> &7- Deletes an unloaded world from the server."));
             s.sendMessage(divider);
             return true;
         }
@@ -263,16 +264,18 @@ public class MainCommand implements CommandExecutor {
                 return true;
             }
 
-            final VerseWorld world = VerseWorldManager.getVerseWorldByName(args[1]);
-            if(world == null) {
-                Utils.formalPlayerWarning(s, "This world does not exists or is not registered on MegaVerse.");
+            World w = Bukkit.getWorld(args[1]);
+            if(w == null) {
+                Utils.formalPlayerWarning(s, "This world does not exists or is not loaded.");
                 return true;
             }
+
+            Location location = VerseWorldManager.getSafeSpawnLocation(w);
 
             if(s instanceof Player) {
                 Player p = (Player) s;
 
-                world.teleport(p);
+                p.teleport(location);
 
                 return true;
             } else {
@@ -288,7 +291,7 @@ public class MainCommand implements CommandExecutor {
                     return true;
                 }
 
-                world.teleport(player);
+                player.teleport(location);
             }
 
             return true;

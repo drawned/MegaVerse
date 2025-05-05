@@ -65,7 +65,9 @@ public final class MegaVerse extends JavaPlugin {
         VerseWorldManager.loadExistingWorlds();
         empty();
 
+        log("&fInitializing metrics... You can disable by disabling bStats in your plugins folder.");
         initializeMetrics();
+        empty();
     }
 
     private static void initializeMetrics() {
