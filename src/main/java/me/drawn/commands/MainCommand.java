@@ -83,7 +83,7 @@ public class MainCommand implements CommandExecutor {
             s.sendMessage(divider);
             s.sendMessage(Utils.getPrefix()+"Running MegaVerse v"+ MegaVerse.getInstance().getDescription().getVersion());
             s.sendMessage(divider);
-            s.sendMessage(Utils.c(Utils.GREEN_COLOR+"/megaverse create <world name> &7- Allows you to create a new world using custom generators.\n"
+            s.sendMessage(Utils.c(Utils.GREEN_COLOR+"/megaverse create <world name> &7- Allows you to create a new world.\n"
                     +Utils.GREEN_COLOR+"/megaverse tp <world> [player] &7- Teleports to the specified world.\n"
                     +Utils.GREEN_COLOR+"/megaverse info [world] &7- View detailed info about a world.\n"
                     +Utils.GREEN_COLOR+"/megaverse list &7- Shows a list of all existing worlds.\n"
