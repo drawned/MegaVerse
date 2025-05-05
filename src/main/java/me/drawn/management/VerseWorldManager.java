@@ -7,7 +7,6 @@ import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.WorldInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -196,7 +195,7 @@ public class VerseWorldManager {
     }
 
     public static List<String> getLoadedWorldsNames() {
-        return Bukkit.getWorlds().stream().map(WorldInfo::getName).collect(Collectors.toList());
+        return Bukkit.getWorlds().stream().map(a -> a.getName()).collect(Collectors.toList());
     }
 
     public static void createWorld(VerseCreationOptions options, WorldCreationCallback callback) {

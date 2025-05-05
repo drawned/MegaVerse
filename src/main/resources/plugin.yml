@@ -2,7 +2,7 @@ name: MegaVerse
 version: '1.0.1-RELEASE'
 main: me.drawn.MegaVerse
 author: Drawn
-api-version: 1.17
+api-version: 1.16
 
 commands:
   megaverse:

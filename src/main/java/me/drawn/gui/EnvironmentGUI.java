@@ -2,7 +2,6 @@ package me.drawn.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 
 import static me.drawn.utils.MenuUtils.simpleButton;
