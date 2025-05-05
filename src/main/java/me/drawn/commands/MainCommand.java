@@ -79,9 +79,6 @@ public class MainCommand implements CommandExecutor {
             p.playSound(p.getLocation(), "entity.villager.work_cartographer", 1, 1);
         }
 
-        if(noPermission(s, "megaverse.command"))
-            return true;
-
         if(args.length == 0) {
             s.sendMessage(divider);
             s.sendMessage(Utils.getPrefix()+"Running MegaVerse v"+ MegaVerse.getInstance().getDescription().getVersion());
