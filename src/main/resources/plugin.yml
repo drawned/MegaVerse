@@ -1,0 +1,14 @@
+name: MegaVerse
+version: '1.0.1-RELEASE'
+main: me.drawn.MegaVerse
+author: Drawn
+api-version: 1.17
+
+commands:
+  megaverse:
+    description: "Main plugin command"
+    permission: "megaverse.command"
+    aliases:
+      - mv
+      - verseworld
+      - world

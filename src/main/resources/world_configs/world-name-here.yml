@@ -1,0 +1,10 @@
+seed: 12909210902
+
+generator: "small_islands_generator"
+
+options:
+  difficulty: EASY
+
+flags:
+  pvp: true
+  allow-weather-change: true
