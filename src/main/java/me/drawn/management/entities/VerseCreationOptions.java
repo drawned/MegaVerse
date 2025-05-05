@@ -89,17 +89,17 @@ public class VerseCreationOptions {
         WorldCreator creator = new WorldCreator(worldName());
 
         if(hasChunkGenerator())
-            creator = creator.generator(getGeneratorFullName());
+            creator.generator(getGeneratorFullName());
 
-        creator = creator.seed(seed);
+        creator.seed(seed);
 
         if(environment != null)
-            creator = creator.environment(environment);
+            creator.environment(environment);
 
         if(type != null)
-            creator = creator.type(type);
+            creator.type(type);
 
-        creator = creator.hardcore(hardcore);
+        creator.hardcore(hardcore);
 
         return creator;
     }

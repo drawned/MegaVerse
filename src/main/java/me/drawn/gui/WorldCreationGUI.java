@@ -1,5 +1,6 @@
 package me.drawn.gui;
 
+import me.drawn.MegaVerse;
 import me.drawn.management.VerseGeneratorManager;
 import me.drawn.management.VerseWorldManager;
 import me.drawn.management.entities.CustomGenerator;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -24,28 +26,30 @@ public class WorldCreationGUI implements Listener {
 
     public static HashMap<UUID, VerseCreationOptions> verseCreatorHashMap = new HashMap<>();
 
-    private static ArrayList<Inventory> inventories = new ArrayList<>();
-    private static HashMap<Inventory, GUIType> inventoriesTypes = new HashMap<>();
-
-    public enum GUIType {
-        SELECT_ENVIRONMENT,
-        WORLD_CREATION
-    }
+    private static final ArrayList<Inventory> creationInventories = new ArrayList<>();
 
     public static void openSelectMenu(Player player, final String worldName) {
         verseCreatorHashMap.put(player.getUniqueId(), new VerseCreationOptions(worldName));
+        player.openInventory(EnvironmentGUI.inventory);
+    }
 
-        Inventory inventory = Bukkit.createInventory(null, 27, "Select the world environment");
-        inventory.setItem(10, simpleButton(Material.NETHERRACK, "Nether", "Click to select the world type", "as a Nether type."));
+    public static boolean isVerseGUI(final Inventory inventory) {
+        return creationInventories.contains(inventory)
+                || inventory == GeneratorsGUI.inventory
+                || inventory == EnvironmentGUI.inventory
+                || inventory == WorldTypesGUI.inventory;
+    }
 
-        inventory.setItem(13, simpleButton(Material.GRASS_BLOCK, "Overworld", "Click to select the world type", "as the normal Overworld type."));
+    @EventHandler
+    public void onClose(InventoryCloseEvent e) {
+        final Inventory inventory = e.getInventory();
 
-        inventory.setItem(16, simpleButton(Material.END_STONE, "The End", "Click to select the world type", "as a The End type."));
-
-        player.openInventory(inventory);
-
-        inventories.add(inventory);
-        inventoriesTypes.put(inventory, GUIType.SELECT_ENVIRONMENT);
+        if(inventory == GeneratorsGUI.inventory
+        || inventory == WorldTypesGUI.inventory) {
+            Bukkit.getScheduler().runTaskLater(MegaVerse.getInstance(), () -> {
+                openMainMenu((Player) e.getPlayer());
+            }, 2);
+        }
     }
 
     @EventHandler
@@ -54,8 +58,7 @@ public class WorldCreationGUI implements Listener {
         final Player p = (Player)e.getWhoClicked();
         final Inventory inventory = e.getInventory();
 
-        if(!inventories.contains(inventory) && inventory != GeneratorsGUI.inventory
-        && inventory != WorldTypesGUI.inventory)
+        if(!isVerseGUI(inventory))
             return;
 
         e.setCancelled(true);
@@ -96,24 +99,24 @@ public class WorldCreationGUI implements Listener {
         }
 
         // Environment selection
-        if(inventoriesTypes.get(e.getInventory()) == GUIType.SELECT_ENVIRONMENT) {
+        if(inventory == EnvironmentGUI.inventory) {
             switch (slot) {
                 case 10: {
                     selectEnvironment(p, World.Environment.NETHER);
-                    break;
+                    return;
                 }
                 case 13: {
                     selectEnvironment(p, World.Environment.NORMAL);
-                    break;
+                    return;
                 }
                 case 16: {
                     selectEnvironment(p, World.Environment.THE_END);
-                    break;
+                    return;
                 }
             }
         }
 
-        if(inventoriesTypes.get(e.getInventory()) == GUIType.WORLD_CREATION) {
+        if(creationInventories.contains(inventory)) {
             VerseCreationOptions creator = verseCreatorHashMap.get(p.getUniqueId());
             switch (slot) {
                 // World creation
@@ -215,16 +218,14 @@ public class WorldCreationGUI implements Listener {
     }
 
     private static void deleteCache(Player player, Inventory mainMenu) {
-        inventoriesTypes.remove(mainMenu);
-        inventories.remove(mainMenu);
+        creationInventories.remove(mainMenu);
         verseCreatorHashMap.remove(player.getUniqueId());
     }
 
     private static void selectEnvironment(Player player, World.Environment environment) {
         player.closeInventory();
 
-        VerseCreationOptions creator = verseCreatorHashMap.get(player.getUniqueId());
-        creator.environment(environment);
+        verseCreatorHashMap.get(player.getUniqueId()).environment(environment);
 
         openMainMenu(player);
     }
@@ -240,6 +241,7 @@ public class WorldCreationGUI implements Listener {
 
         inventory.setItem(4, simpleButton(Material.LIME_DYE, "Create World", "Click to finish the world creation", " ",
                 Utils.GREEN_COLOR+"World Name: &f"+creator.worldName(),
+                Utils.GREEN_COLOR+"World Environment: &f"+creator.environment().name(),
                 " ",
                 Utils.GREEN_COLOR+"World Seed: &f"+creator.seed(),
                 Utils.GREEN_COLOR+"World Type: &f"+creator.type(),
@@ -257,22 +259,20 @@ public class WorldCreationGUI implements Listener {
                 "Currently there is &a"+ VerseGeneratorManager.getAllGenerators().size()+" &7registered", "custom world generators."));
 
         if(creator.hasChunkGenerator() && !creator.getGeneratorFullName().contains("MegaVerse")) {
-
             inventory.setItem(32, simpleButton(Material.NAME_TAG, "Generator ID", Utils.GREEN_COLOR+"Full generator name: &f"+creator.getGeneratorFullName(), " ", "Some plugins requires an ID or parameter", "alongside it's name to work or load custom packs.", "This is the case in plugins like Terra and RTG."));
-
         }
 
-        inventory.setItem(25, simpleButton(Material.SKELETON_SKULL, "Hardcore Mode", Utils.GREEN_COLOR+"Enabled?: &f"+hardcoreEnabled, " ", "Click to toggle hardcore", "mode for this world."));
+        inventory.setItem(25, simpleButton(Material.SKELETON_SKULL, "Hardcore Mode", Utils.GREEN_COLOR+"Enabled?: &f"+hardcoreEnabled, " ",
+                "Enabling this option will mark the", "world as a Hardcore Mode world", "In order to fully play Hardcore, you need to enable", "it inside your server configuration file aswell.", " ", "Click to toggle hardcore", "mode for this world."));
 
         player.openInventory(inventory);
 
-        inventories.add(inventory);
-        inventoriesTypes.put(inventory, GUIType.WORLD_CREATION);
+        creationInventories.add(inventory);
     }
 
     @EventHandler
     public void onDrag(InventoryDragEvent e) {
-        if(inventories.contains(e.getInventory()) || e.getInventory() != GeneratorsGUI.inventory)
+        if(isVerseGUI(e.getInventory()))
             e.setCancelled(true);
     }
 

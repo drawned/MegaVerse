@@ -99,6 +99,15 @@ public class MainCommand implements CommandExecutor {
             return true;
         }
 
+        if(args[0].equalsIgnoreCase("import")) {
+            if(noPermission(s, "megaverse.command.import"))
+                return true;
+
+            Utils.formalPlayerWarning(s, "This command is still under development. MegaVerse is growing quickly, so this command will be available soon!");
+
+            return true;
+        }
+
         if(args[0].equalsIgnoreCase("list")) {
             if(noPermission(s, "megaverse.command.list"))
                 return true;

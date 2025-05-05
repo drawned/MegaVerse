@@ -18,7 +18,7 @@ import static me.drawn.utils.MenuUtils.simpleButton;
 
 public class GeneratorsGUI {
 
-    private static HashMap<Integer, CustomGenerator> generatorHashMap = new HashMap<>();
+    private static final HashMap<Integer, CustomGenerator> generatorHashMap = new HashMap<>();
 
     public static final Inventory inventory = generateInventory();
     private static Inventory generateInventory() {
