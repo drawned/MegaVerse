@@ -7,6 +7,7 @@ import me.drawn.management.BuiltinGenerators;
 import me.drawn.management.VerseGeneratorManager;
 import me.drawn.management.VerseWorldManager;
 import me.drawn.management.entities.VerseGenerator;
+import me.drawn.utils.Metrics;
 import me.drawn.utils.ServerVersion;
 import me.drawn.utils.Utils;
 import org.bukkit.Bukkit;
@@ -64,6 +65,11 @@ public final class MegaVerse extends JavaPlugin {
         VerseWorldManager.loadExistingWorlds();
         empty();
 
+        initializeMetrics();
+    }
+
+    private static void initializeMetrics() {
+        Metrics metrics = new Metrics(MegaVerse.getInstance(), 25747);
     }
 
     @Override
