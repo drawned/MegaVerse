@@ -253,7 +253,7 @@ public class WorldCreationGUI implements Listener {
                 "Click to select the type", "of the world.",
                 " ", "Available options:", "• Normal", "• Flat", "• Amplified", "• Large Biomes"));
 
-        inventory.setItem(21, simpleButton(Material.WHEAT_SEEDS, "Seed", "Click to set a custom seed", "for the world."));
+        inventory.setItem(21, simpleButton(Material.WHEAT_SEEDS, "Seed", Utils.GREEN_COLOR+"Current seed: &f"+creator.seed(), " ", "Click to set a custom seed", "for the world."));
 
         inventory.setItem(23, simpleButton(Material.BEACON, "World Generators", Utils.GREEN_COLOR+"Current generator: &f"+generatorName, " ", "Click to select a custom", "world generator.", " ",
                 "Currently there is &a"+ VerseGeneratorManager.getAllGenerators().size()+" &7registered", "custom world generators."));
@@ -263,7 +263,7 @@ public class WorldCreationGUI implements Listener {
         }
 
         inventory.setItem(25, simpleButton(Material.SKELETON_SKULL, "Hardcore Mode", Utils.GREEN_COLOR+"Enabled?: &f"+hardcoreEnabled, " ",
-                "Enabling this option will mark the", "world as a Hardcore Mode world", "In order to fully play Hardcore, you need to enable", "it inside your server configuration file aswell.", " ", "Click to toggle hardcore", "mode for this world."));
+                "Click to toggle hardcore", "mode for this world.", " ", "Enabling this option will mark the", "world as a Hardcore Mode world.", "In order to fully play Hardcore, you need to enable", "it inside your server configuration file aswell."));
 
         player.openInventory(inventory);
 

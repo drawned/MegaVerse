@@ -136,6 +136,13 @@ public class MainCommand implements CommandExecutor {
                 return true;
             }
 
+            final String worldName = args[1];
+
+            if(Bukkit.getWorld(worldName) != null) {
+                Utils.formalPlayerWarning(s, "A world with this name already exists and is loaded on the server.");
+                return true;
+            }
+
             if(s instanceof Player) {
                 Player p = (Player) s;
 
