@@ -17,9 +17,10 @@ public class Utils {
     }
 
     public static String getWarningSymbol() {
-        return ServerVersion.newerThan1_16 ?
-                net.md_5.bungee.api.ChatColor.of("#c74242")+"⚠ " : "§c⚠ ";
+        return WARNING_COLOR+"⚠ ";
     }
+    public static final String WARNING_COLOR = ServerVersion.newerThan1_16 ?
+            net.md_5.bungee.api.ChatColor.of("#c74242")+"" : "§c";
 
     public static void formalPlayerWarning(CommandSender sender, String warning) {
         sender.sendMessage(Utils.getWarningSymbol()+Utils.c(warning));

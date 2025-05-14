@@ -1,11 +1,14 @@
 package me.drawn.gui;
 
+import me.drawn.gui.custom.WorldCreationGUI;
 import me.drawn.management.VerseGeneratorManager;
 import me.drawn.management.entities.CustomGenerator;
 import me.drawn.management.entities.VerseGenerator;
 import me.drawn.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,11 +17,26 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 
-import static me.drawn.utils.MenuUtils.simpleButton;
+import static me.drawn.gui.VerseGUI.simpleButton;
 
 public class GeneratorsGUI {
 
     private static final HashMap<Integer, CustomGenerator> generatorHashMap = new HashMap<>();
+
+    public static void onClick(final int slot, final Player player, final Inventory inv, VerseGUI.Type type) {
+        if(type == VerseGUI.Type.CREATION_GUI) {
+            if (!WorldCreationGUI.verseCreatorHashMap.containsKey(player.getUniqueId())) return;
+
+            CustomGenerator gen = GeneratorsGUI.getGeneratorInSlot(slot);
+            if (gen != null) {
+                WorldCreationGUI.verseCreatorHashMap.get(player.getUniqueId()).chunkGenerator(gen);
+                player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
+            }
+
+            player.closeInventory();
+            WorldCreationGUI.openMainMenu(player);
+        }
+    }
 
     public static final Inventory inventory = generateInventory();
     private static Inventory generateInventory() {

@@ -93,7 +93,8 @@ public class VerseWorldManager {
                 if (config.contains("environment"))
                     creator.environment(World.Environment.valueOf(config.getString("environment", "NORMAL")));
 
-                creator.seed(config.getLong("seed"));
+                if(config.contains("seed"))
+                    creator.seed(config.getLong("seed"));
 
                 WorldType type = WorldType.getByName(config.getString("world-type", "NORMAL"));
                 if(type != null)

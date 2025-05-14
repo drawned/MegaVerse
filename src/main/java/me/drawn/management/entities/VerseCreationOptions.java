@@ -32,12 +32,16 @@ public class VerseCreationOptions {
     }
 
     public boolean hasChunkGenerator() {
-        return chunkGenerator != null && chunkGeneratorFullName != null;
+        return chunkGeneratorFullName != null && !chunkGeneratorFullName.isEmpty();
     }
 
     public VerseCreationOptions chunkGenerator(CustomGenerator generator) {
         this.chunkGenerator = generator;
         this.chunkGeneratorFullName = generator.getName();
+        return this;
+    }
+    public VerseCreationOptions chunkGenerator(String string) {
+        this.chunkGeneratorFullName = string;
         return this;
     }
     public VerseCreationOptions chunkGenerator(CustomGenerator generator, String id) {

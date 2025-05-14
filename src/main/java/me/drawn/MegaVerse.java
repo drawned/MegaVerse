@@ -2,7 +2,8 @@ package me.drawn;
 
 import me.drawn.commands.MainCommand;
 import me.drawn.commands.MainCommandTabComplete;
-import me.drawn.gui.WorldCreationGUI;
+import me.drawn.gui.VerseGUI;
+import me.drawn.gui.custom.WorldCreationGUI;
 import me.drawn.management.BuiltinGenerators;
 import me.drawn.management.VerseGeneratorManager;
 import me.drawn.management.VerseWorldManager;
@@ -58,7 +59,7 @@ public final class MegaVerse extends JavaPlugin {
         empty();
 
         log("&fRegistering events...");
-        getServer().getPluginManager().registerEvents(new WorldCreationGUI(), this);
+        getServer().getPluginManager().registerEvents(new VerseGUI(), this);
         empty();
 
         log("&fLoading worlds...");

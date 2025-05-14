@@ -10,6 +10,8 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -37,6 +39,7 @@ public class VoidGenerator extends VerseGenerator {
         }
 
         public static class VoidBiomeProvider extends BiomeProvider {
+            private static final List<Biome> biomes = Collections.singletonList(Biome.PLAINS);
             @Override
             public Biome getBiome(WorldInfo worldInfo, int x, int y, int z) {
                 return Biome.PLAINS;
@@ -44,7 +47,7 @@ public class VoidGenerator extends VerseGenerator {
 
             @Override
             public List<Biome> getBiomes(WorldInfo worldInfo) {
-                return List.of(Biome.PLAINS);
+                return biomes;
             }
         }
     }

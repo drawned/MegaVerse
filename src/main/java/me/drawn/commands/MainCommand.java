@@ -1,7 +1,8 @@
 package me.drawn.commands;
 
 import me.drawn.MegaVerse;
-import me.drawn.gui.WorldCreationGUI;
+import me.drawn.gui.custom.WorldCreationGUI;
+import me.drawn.gui.custom.WorldImportGUI;
 import me.drawn.management.VerseWorldManager;
 import me.drawn.management.entities.VerseFlag;
 import me.drawn.management.entities.VerseWorld;
@@ -20,14 +21,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 public class MainCommand implements CommandExecutor {
     public static final List<String> SUB_COMMANDS = Arrays.asList("create", "info", "flag", "list", "tp", "import", "unload", "delete");
 
     private static final List<String> confirmDelete = new ArrayList<>();
+
+    public static final String divider = Utils.GREEN_COLOR+"⁎ §7§m                                   §r "+Utils.GREEN_COLOR+"⁎";
 
     public static void sendWorldActionsComponent(CommandSender s, World world) {
         final String worldName = world.getName();
@@ -70,7 +72,24 @@ public class MainCommand implements CommandExecutor {
         s.spigot().sendMessage(component);
     }
 
-    public static String divider = "§7* §m                                   §r §7*";
+    public static void sendClipboardWorldInfo(CommandSender s, String name, String value) {
+        BaseComponent baseComponent = new TextComponent(name);
+        baseComponent.setColor(net.md_5.bungee.api.ChatColor.of(Utils.GREEN_HEX));
+
+        BaseComponent divider = new TextComponent(": ");
+        divider.setColor(ChatColor.GRAY);
+
+        BaseComponent clipboard = new TextComponent(value);
+        clipboard.setColor(ChatColor.WHITE);
+        clipboard.setItalic(true);
+        clipboard.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Click to Copy to Clipboard")));
+        clipboard.setClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, value));
+
+        baseComponent.addExtra(divider);
+        baseComponent.addExtra(clipboard);
+
+        s.spigot().sendMessage(baseComponent);
+    }
 
     @Override
     public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
@@ -98,7 +117,33 @@ public class MainCommand implements CommandExecutor {
             if(noPermission(s, "megaverse.command.import"))
                 return true;
 
-            Utils.formalPlayerWarning(s, "This command is still under development. MegaVerse is growing quickly, so this command will be available soon!");
+            if(args.length == 1) {
+                Utils.incorrectUsage(s, "/megaverse import <world_name>");
+                return true;
+            }
+
+            final String worldName = args[1];
+            if(Bukkit.getWorld(worldName) != null) {
+                Utils.formalPlayerWarning(s, "A world with this name already exists and is loaded on the server.");
+                return true;
+            }
+
+            File worldFolder = new File(Bukkit.getWorldContainer(), worldName);
+
+            if(!worldFolder.exists()
+            || !worldFolder.isDirectory()) {
+                Utils.formalPlayerWarning(s, "There is no valid world folder with the name "+worldName+", checking inside this folder: "+
+                        Bukkit.getWorldContainer().getAbsolutePath());
+                return true;
+            }
+
+            if(s instanceof Player) {
+                Player p = (Player) s;
+
+                WorldImportGUI.openMenu(p, worldFolder);
+
+                return true;
+            }
 
             return true;
         }
@@ -141,7 +186,7 @@ public class MainCommand implements CommandExecutor {
             if(s instanceof Player) {
                 Player p = (Player) s;
 
-                WorldCreationGUI.openSelectMenu(p, args[1]);
+                WorldCreationGUI.openMenu(p, worldName);
 
                 return true;
             }
@@ -170,22 +215,28 @@ public class MainCommand implements CommandExecutor {
             }
 
             final VerseWorld verseWorld = VerseWorldManager.getVerseWorldByWorld(w);
-            final String isVerseWorld = verseWorld != null ? "&2Yes" : "&cNo";
+            final String isVerseWorld = verseWorld != null ? "Yes" : "§cNo";
+            final String isHardcore = w.isHardcore() ? "Yes" : "§cNo";
 
             s.sendMessage(divider);
-            s.sendMessage(Utils.c(Utils.GREEN_COLOR+"World Name: &f"+w.getName()
-                    +"\n"+Utils.GREEN_COLOR+"World Type: &f"+w.getWorldType()
-                    +"\n"+Utils.GREEN_COLOR+"World UID: &f"+w.getUID()
-                    +"\n"+Utils.GREEN_COLOR+"Environment Type: &f"+w.getEnvironment()
-                    +"\n"+Utils.GREEN_COLOR+"Seed: &f"+w.getSeed()
-                    +"\n"+divider
-                    +"\n"+Utils.GREEN_COLOR+"Is MegaVerse World: "+isVerseWorld
-            ));
+            sendClipboardWorldInfo(s, "World Name", w.getName());
+            sendClipboardWorldInfo(s, "World Type", w.getWorldType().toString());
+            sendClipboardWorldInfo(s, "World UID", w.getUID().toString());
+            sendClipboardWorldInfo(s, "World Environment", w.getEnvironment().toString());
+            sendClipboardWorldInfo(s, "World Seed", String.valueOf(w.getSeed()));
 
+            s.sendMessage(divider);
+
+            sendClipboardWorldInfo(s, "Difficulty", w.getDifficulty().name());
+            sendClipboardWorldInfo(s, "Hardcore Mode", isHardcore);
+            sendClipboardWorldInfo(s, "Simulation Distance", String.valueOf(w.getSimulationDistance()));
+            sendClipboardWorldInfo(s, "View Distance", String.valueOf(w.getViewDistance()));
+
+            s.sendMessage(divider);
+
+            sendClipboardWorldInfo(s, "Registered on MegaVerse?", isVerseWorld);
             if(verseWorld != null) {
-                s.sendMessage(Utils.c(Utils.GREEN_COLOR+"World Generator: &f"+verseWorld.getGenerator()
-                        +"\n"+Utils.GREEN_COLOR+"Difficulty: &f"+w.getDifficulty()
-                ));
+                sendClipboardWorldInfo(s, "World Generator", verseWorld.getGenerator());
 
                 for(VerseFlag flag : verseWorld.getFlags()) {
                     s.sendMessage(Utils.c(Utils.GREEN_COLOR+"Flag "+flag.getName()+": "+flag.getValue()));
@@ -233,7 +284,7 @@ public class MainCommand implements CommandExecutor {
 
             World w = Bukkit.getWorld(worldName);
             if(w != null) {
-                Utils.formalPlayerWarning(s, "You need to unload this world first before trying to delete it.");
+                Utils.formalPlayerWarning(s, "You need to unload this world first before trying to delete it. You can unload by using /megaverse unload "+worldName);
                 return true;
             }
 

@@ -6,7 +6,7 @@
 
     <groupId>me.drawn</groupId>
     <artifactId>MegaVerse</artifactId>
-    <version>1.0.2-RELEASE</version>
+    <version>1.0.4-RELEASE</version>
     <packaging>jar</packaging>
 
     <name>MegaVerse</name>

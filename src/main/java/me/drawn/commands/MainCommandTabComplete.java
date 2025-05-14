@@ -1,5 +1,6 @@
 package me.drawn.commands;
 
+import me.drawn.management.VerseImportManager;
 import me.drawn.management.VerseWorldManager;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -26,11 +27,16 @@ public class MainCommandTabComplete implements TabCompleter {
         if(args.length == 2) {
             final String subCommand = args[0].toLowerCase();
 
-            if(subCommand.equals("create"))
+            if(subCommand.equals("create") && s.hasPermission("megaverse.command.create"))
                 return List.of("<world_name>");
 
             if(subCommand.equals("info") || subCommand.equals("unload") || subCommand.equals("delete") || subCommand.equals("tp")) {
-                return VerseWorldManager.getLoadedWorldsNames();
+                if(s.hasPermission("megaverse.command."+subCommand))
+                    return VerseWorldManager.getLoadedWorldsNames();
+            }
+
+            if(subCommand.equals("import") && s.hasPermission("megaverse.command.import")) {
+                return VerseImportManager.getValidImportableWorlds();
             }
         }
 

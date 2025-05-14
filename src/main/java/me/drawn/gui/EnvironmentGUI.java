@@ -1,10 +1,14 @@
 package me.drawn.gui;
 
+import me.drawn.gui.custom.WorldCreationGUI;
+import me.drawn.gui.custom.WorldImportGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import static me.drawn.utils.MenuUtils.simpleButton;
+import static me.drawn.gui.VerseGUI.simpleButton;
 
 public class EnvironmentGUI {
 
@@ -20,4 +24,21 @@ public class EnvironmentGUI {
         return inventory;
     }
 
+    public static void onClick(final int slot, final Player player, final Inventory inv, VerseGUI.Type type) {
+        World.Environment environment = getWorldEnvironmentInSlot(slot);
+
+        if(type == VerseGUI.Type.CREATION_GUI)
+            WorldCreationGUI.selectEnvironment(player, environment);
+        else
+            WorldImportGUI.selectEnvironment(player, environment);
+    }
+
+    public static World.Environment getWorldEnvironmentInSlot(final int slot) {
+        switch (slot) {
+            case 10: {return World.Environment.NETHER;}
+            case 13: {return World.Environment.NORMAL;}
+            case 16: {return World.Environment.THE_END;}
+        }
+        return World.Environment.NORMAL;
+    }
 }
