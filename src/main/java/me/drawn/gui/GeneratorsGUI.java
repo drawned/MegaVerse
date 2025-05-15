@@ -78,14 +78,6 @@ public class GeneratorsGUI {
         return inv;
     }
 
-    private static ItemStack getDividerItem() {
-        ItemStack itemStack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta im = itemStack.getItemMeta();
-        im.setDisplayName("");
-        itemStack.setItemMeta(im);
-        return itemStack;
-    }
-
     @Nullable
     public static CustomGenerator getGeneratorInSlot(final int slot) {
         return generatorHashMap.getOrDefault(slot, null);

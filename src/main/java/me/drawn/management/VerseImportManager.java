@@ -77,6 +77,8 @@ public class VerseImportManager {
                 this.wasSet = true;
                 this.difficulty = difficulty;
                 this.worldType = worldType;
+
+                nbtReader.close();
             } else {
                 this.version = null;
                 this.hardcoreMode = false;
